@@ -1,10 +1,13 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QVBoxLayout, QWidget, QScrollArea, QTextEdit
 from PyQt5.QtGui import QPixmap
+from PyQt5 import QtWidgets
 import ebooklib
 from ebooklib import epub
 import sys
 
 class Window(QMainWindow):
+    image_text= QtWidgets.QVBoxLayout()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Noveled")
@@ -16,6 +19,7 @@ class Window(QMainWindow):
         # Read the EPUB file
         book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
         text = ''
+     
 
         # Iterate over the items in the ebook
         for item in book.get_items():
@@ -26,22 +30,22 @@ class Window(QMainWindow):
                 pixmap = QPixmap()
                 pixmap.loadFromData(item.get_content())
                 label.setPixmap(pixmap)
-                self.layout.addWidget(label)
+                self.image_text.addWidget(label)
             # Check if the item is a document
             elif item.get_type() == ebooklib.ITEM_DOCUMENT:
                 text += item.get_content().decode("utf-8") + "\n\n" 
-        text_edit = QTextEdit(self)
-        text_edit.setReadOnly(True)
-        text_edit.setHtml(item.get_content().decode("utf-8"))
-        self.layout.addWidget(text_edit)
-        # Create a widget to hold the layout
-        widget = QWidget(self)
-        widget.setLayout(self.layout)
+
+        text_edit = QtWidgets.QWidget()
+        text_layout = QtWidgets.QLabel()
+        text_layout.setText(text)
+
+        self.image_text.addWidget(text_layout)
+        text_edit.setLayout(self.image_text)
 
         # Create a scroll area and set the widget as its child
         scroll_area = QScrollArea(self)
         scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(widget)
+        scroll_area.setWidget(text_edit)
 
         # Set the scroll area as the central widget
         self.setCentralWidget(scroll_area)
