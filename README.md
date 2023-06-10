@@ -1,7 +1,7 @@
 # Noveled
 A python app for reading.
 
-## prerequisite
+<!-- ## prerequisite
 ```powershell
 pip install PyQt5
-```
+``` -->
