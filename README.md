@@ -25,3 +25,6 @@ cover_image = book.get_item_with_id('cover1.jpg')
 ### image containing name of ..... images?
 ![Alt text](image.png)
 
+### epub doc
+  - https://buildmedia.readthedocs.org/media/pdf/ebooklib/latest/ebooklib.pdf
+
