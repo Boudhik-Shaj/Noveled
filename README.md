@@ -13,7 +13,7 @@ pip install EbookLib
 ### Check List
 - [ ] add background and font color control
 - [ ] read from sites using url
-- [ ] control forward and backward using arrow keys
+- [ ] control navigation using arrow keys
 
 
 
