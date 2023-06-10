@@ -33,13 +33,13 @@ class Window(QMainWindow):
                 self.image_text.addWidget(label)
             # Check if the item is a document
             elif item.get_type() == ebooklib.ITEM_DOCUMENT:
-                text += item.get_content().decode("utf-8") + "\n\n" 
+                # Create a QTextEdit for the document text
+                text_layout = QLabel(self)
+                text_layout.setWordWrap(True)
+                text_layout.setText(item.get_content().decode("utf-8"))
+                self.image_text.addWidget(text_layout)
 
         text_edit = QtWidgets.QWidget()
-        text_layout = QtWidgets.QLabel()
-        text_layout.setText(text)
-
-        self.image_text.addWidget(text_layout)
         text_edit.setLayout(self.image_text)
 
         # Create a scroll area and set the widget as its child
