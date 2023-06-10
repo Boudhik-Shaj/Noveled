@@ -8,3 +8,6 @@ pip install PyQt5
 ## File format supported
 - pdf
 - epub
+
+
+- [x] write
