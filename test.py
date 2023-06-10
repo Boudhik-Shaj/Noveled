@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QVBoxLayout, QWidget, QScrollArea, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QHBoxLayout, QWidget, QScrollArea, QTextEdit
 from PyQt5.QtGui import QPixmap
 import ebooklib
 from ebooklib import epub
@@ -11,7 +11,7 @@ class Window(QMainWindow):
         self.setGeometry(0, 0, 1920, 1080)
 
         # Create a layout to hold the widgets
-        self.layout = QVBoxLayout()
+        self.layout = QHBoxLayout()
 
         # Read the EPUB file
         book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
