@@ -62,3 +62,4 @@ if __name__ == "__main__":
     win = window()
     win.showMaximized()
     sys.exit(app.exec_())
+
