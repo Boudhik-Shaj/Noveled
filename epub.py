@@ -18,7 +18,7 @@ class Window(QMainWindow):
 
         # Read the EPUB file
         book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
-        text = ''
+        text_list = []
      
 
         # Iterate over the items in the ebook
@@ -33,11 +33,8 @@ class Window(QMainWindow):
                 self.image_text.addWidget(label)
             # Check if the item is a document
             elif item.get_type() == ebooklib.ITEM_DOCUMENT:
-                # Create a QTextEdit for the document text
-                text_layout = QLabel(self)
-                text_layout.setWordWrap(True)
-                text_layout.setText(item.get_content().decode("utf-8"))
-                self.image_text.addWidget(text_layout)
+                text = "yes"
+            # Create a QTextEdit for the document text
 
         text_edit = QtWidgets.QWidget()
         text_edit.setLayout(self.image_text)
@@ -49,6 +46,13 @@ class Window(QMainWindow):
 
         # Set the scroll area as the central widget
         self.setCentralWidget(scroll_area)
+
+    def create_word_print(self,text):
+        self.text_print = QtWidgets.QVBoxLayout()
+        text_layout = QLabel(self)
+        text_layout.setWordWrap(True)
+        text_layout.setText(text)
+        self.image_text.addWidget(text_layout)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
