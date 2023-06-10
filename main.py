@@ -33,6 +33,7 @@ class window(QMainWindow):
         load.addWidget(self.loadngAnime)
         self.loadngScreen.setLayout(load)
         self.setCentralWidget(self.loadngScreen)
+
         self.timer = QTimer()
         self.timer.setSingleShot(True)  # Trigger only once
         self.timer.timeout.connect(self.closeLoadingScreen)
@@ -51,7 +52,6 @@ class window(QMainWindow):
         subprocess.Popen(['python', 'epub.py'])
         self.loadingScreen.close()
         
-        # self.show()
         
 
 

@@ -6,8 +6,8 @@ from ebooklib import epub
 import sys
 
 class Window(QMainWindow):
-    image_text= QtWidgets.QVBoxLayout()
 
+    
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Noveled")
@@ -18,7 +18,8 @@ class Window(QMainWindow):
 
         # Read the EPUB file
         book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
-        text_list = []
+        self.text_list = []
+        self.image_text= QtWidgets.QVBoxLayout()
      
 
         # Iterate over the items in the ebook
@@ -31,28 +32,29 @@ class Window(QMainWindow):
                 pixmap.loadFromData(item.get_content())
                 label.setPixmap(pixmap)
                 self.image_text.addWidget(label)
-            # Check if the item is a document
+
             elif item.get_type() == ebooklib.ITEM_DOCUMENT:
-                text = "yes"
-            # Create a QTextEdit for the document text
+                text = item.get_content().decode("utf-8")
+                self.text_list.append(text)
 
-        text_edit = QtWidgets.QWidget()
-        text_edit.setLayout(self.image_text)
+        # self.scroller(self.image_text)
+        self.create_word(self.text_list[7])
 
-        # Create a scroll area and set the widget as its child
+    def scroller(self,to_print):
+        self.epub_page = QtWidgets.QWidget()
+        self.epub_page.setLayout(to_print)
         scroll_area = QScrollArea(self)
         scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(text_edit)
-
-        # Set the scroll area as the central widget
+        scroll_area.setWidget(self.epub_page)
         self.setCentralWidget(scroll_area)
 
-    def create_word_print(self,text):
+    def create_word(self,text):
         self.text_print = QtWidgets.QVBoxLayout()
         text_layout = QLabel(self)
         text_layout.setWordWrap(True)
         text_layout.setText(text)
-        self.image_text.addWidget(text_layout)
+        self.text_print.addWidget(text_layout)
+        self.scroller(self.text_print)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
