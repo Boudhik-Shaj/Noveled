@@ -1,7 +1,10 @@
 # Noveled
 A python app for reading.
 
-<!-- ## prerequisite
+## prerequisite
 ```powershell
 pip install PyQt5
-``` -->
+```
+## File format supported
+- pdf
+- epub
