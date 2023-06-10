@@ -48,7 +48,7 @@ class window(QMainWindow):
         self.homeScreen.setLayout(self.home_layout)
 
     def closeLoadingScreen(self):
-        subprocess.Popen(['python', 'test.py'])
+        subprocess.Popen(['python', 'epub.py'])
         self.loadingScreen.close()
         
         # self.show()
