@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QIcon, QMovie
 from PyQt5.QtCore import QTimer
 import sys
-import time
+import subprocess
 
 
 class window(QMainWindow):
@@ -48,7 +48,9 @@ class window(QMainWindow):
         self.homeScreen.setLayout(self.home_layout)
 
     def closeLoadingScreen(self):
-        self.setCentralWidget(self.homeScreen)
+        subprocess.Popen(['python', 'test.py'])
+        self.loadingScreen.close()
+        
         # self.show()
         
 
