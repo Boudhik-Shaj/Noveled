@@ -28,3 +28,5 @@ cover_image = book.get_item_with_id('cover1.jpg')
 ### epub doc
   - https://buildmedia.readthedocs.org/media/pdf/ebooklib/latest/ebooklib.pdf
 
+### loading gif
+[book.gif](https://loading.io/asset/667333)
