@@ -56,19 +56,19 @@ class Window(QMainWindow):
         self.setCentralWidget(scroll_area)
 
     def create_wid(self, item):
-        self.wid_print = QVBoxLayout()
+        self.wid_layout = QVBoxLayout()
 
         if isinstance(item, QPixmap):
             label = QLabel(self)
             label.setPixmap(item)
-            self.wid_print.addWidget(label)
+            self.wid_layout.addWidget(label)
         elif isinstance(item, str):
             text_layout = QLabel(self)
             text_layout.setWordWrap(True)
             text_layout.setText(item)
             text_layout.setFont(self.font)
             text_layout.setStyleSheet("color: white;")
-            self.wid_print.addWidget(text_layout)
+            self.wid_layout.addWidget(text_layout)
         
         button_layout = QHBoxLayout()
 
@@ -97,9 +97,9 @@ class Window(QMainWindow):
         button_layout.addWidget(button_random)
         button_layout.addWidget(button_forward)
 
-        self.wid_print.addLayout(button_layout)
+        self.wid_layout.addLayout(button_layout)
 
-        self.scroller(self.wid_print)
+        self.scroller(self.wid_layout)
 
     def button_forward_clicked(self):
         print("Button Forward Clicked")
