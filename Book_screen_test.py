@@ -8,134 +8,127 @@ import ebooklib
 from ebooklib import epub
 import sys
 
-class Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Noveled")
-        # self.showFullScreen() 
-        # self.setGeometry(0, 0, 1920, 1080)
-        self.setGeometry(100, 100, 800, 600)
-        self.setStyleSheet("background-color: #101117;")
+current_index = 0
+all_list = []
 
-        self.layout = QVBoxLayout()
+window = QMainWindow()
 
-        self.font = QFont()
-        self.font.setFamily("Arial")
-        self.font.setPointSize(12)
+def fonter():
+    font = QFont()
+    font.setFamily("Arial")
+    font.setPointSize(12)
+    return font
 
-        book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
-        self.all_list = []
-
-        for item in book.get_items():
-            if item.get_type() == ebooklib.ITEM_DOCUMENT:
-                item = item.get_content().decode("utf-8")
-                self.all_list.append(item)
-            elif item.get_type() == ebooklib.ITEM_IMAGE:
-                pixmap = QPixmap()
-                pixmap.loadFromData(item.get_content())
-                self.all_list.append(pixmap)
-
-            
-        self.current_index = 0
-        self.counter(0)
+def epub_reader(epub_layout):
+    global current_index
+    global all_list
+    book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
+    for item in book.get_items():
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            item = item.get_content().decode("utf-8")
+            all_list.append(item)
+        elif item.get_type() == ebooklib.ITEM_IMAGE:
+            pixmap = QPixmap()
+            pixmap.loadFromData(item.get_content())
+            all_list.append(pixmap)
+        return counter(epub_layout,current_index)
 
 
-    def counter(self,value):
-        self.clearMainLayout()
-        if value == 0 :
-            self.create_main(self.all_list[self.current_index])
-        elif value==1 and self.current_index!=0:
-            self.current_index = self.current_index - 1
-            self.create_main(self.all_list[self.current_index])
-        elif value==2 and self.current_index!=(len(self.all_list)-1):
-            self.current_index = self.current_index + 1
-            self.create_main(self.all_list[self.current_index])
+def counter(epub_layout,value):
+    global current_index
+    global all_list
+    clearMainLayout(epub_layout)
+    if value == 0 :
+        return create_main(epub_layout,all_list[current_index])
+    elif value==1 and current_index!=0:
+        current_index = current_index - 1
+        return create_main(epub_layout,all_list[current_index])
+    elif value==2 and current_index!=(len(all_list)-1):
+        current_index = current_index + 1
+        return create_main(epub_layout,all_list[current_index])
 
-    def scroller(self, to_print):
-        self.epub_page = QWidget()
-        self.epub_page.setLayout(to_print)
-        scroll_area = QScrollArea(self)
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(self.epub_page)
-        self.setCentralWidget(scroll_area)
+def create_main(epub_layout,item):
+    global current_index
+    global all_list
+    content_layout = QHBoxLayout()
 
-    def create_main(self, item):
-        self.main_layout = QHBoxLayout()
+    if isinstance(item, QPixmap):
+        label = QLabel()
+        label.setPixmap(item)
+        content_layout.addWidget(label)
+    elif isinstance(item, str):
+        text_layout = QLabel()
+        text_layout.setWordWrap(True)
+        text_layout.setText(item)
+        text_layout.setFont(fonter())
+        text_layout.setStyleSheet("color: white;")
+        content_layout.addWidget(text_layout)
 
-        if isinstance(item, QPixmap):
-            label = QLabel(self)
-            label.setPixmap(item)
-            self.main_layout.addWidget(label)
-        elif isinstance(item, str):
-            text_layout = QLabel(self)
-            text_layout.setWordWrap(True)
-            text_layout.setText(item)
-            text_layout.setFont(self.font)
-            text_layout.setStyleSheet("color: white;")
-            self.main_layout.addWidget(text_layout)
+    button_layout = QHBoxLayout()
 
-        self.button_layout = QHBoxLayout()
+    button_forward = QPushButton('->')
+    button_forward.setStyleSheet("color: white;")
+    button_forward.setStyleSheet("background-color: grey;")
 
-        button_forward = QPushButton('->', self)
-        button_forward.setStyleSheet("color: white;")
-        button_forward.setStyleSheet("background-color: grey;")
+    # QShortcut(QKeySequence('Right'), window).activated.connect(button_forward_clicked(epub_layout))
+    button_forward.clicked.connect(button_forward_clicked(epub_layout))
 
-        QShortcut(QKeySequence('Right'), self).activated.connect(self.button_forward_clicked)
-        button_forward.clicked.connect(self.button_forward_clicked)
-
-        
-        button_random = QPushButton('  ', self)
-        button_random.setStyleSheet("color: white;")
-        button_random.setFixedSize(1400, 30)
-        button_random.setStyleSheet("background-color: #101117;")
-        button_random.clicked.connect(button_random.click)
-
-        button_backward = QPushButton('<-', self)
-        button_backward.setStyleSheet("color: white;")
-        button_backward.setStyleSheet("background-color: grey;")
-
-        QShortcut(QKeySequence('Left'), self).activated.connect(self.button_backward_clicked)
-        button_backward.clicked.connect(self.button_backward_clicked)
-
-        self.button_layout.addWidget(button_backward)
-        self.button_layout.addWidget(button_random)
-        self.button_layout.addWidget(button_forward)
-
-        self.layout.addLayout(self.main_layout)
-        self.layout.addLayout(self.button_layout)
-
-        self.scroller(self.layout)
-
-    def button_forward_clicked(self):
-        print("Button Forward Clicked")
-        self.counter(2)
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.stop_functions)
-        self.timer.start(5000)
-
-    def button_backward_clicked(self):
-        print("Button Backwards Clicked")
-        self.counter(1)
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.stop_functions)
-        self.timer.start(5000)
-
-    def stop_functions(self):
-        print ("function done")
     
-    def clearMainLayout(self):
-        while self.layout.count():
-            item = self.layout.takeAt(0)
-            if item.layout():
-                while item.layout().count():
-                    sub_item = item.layout().takeAt(0)
-                    if sub_item.widget():
-                        sub_item.widget().deleteLater()
+    button_random = QPushButton('  ')
+    button_random.setStyleSheet("color: white;")
+    button_random.setFixedSize(1400, 30)
+    button_random.setStyleSheet("background-color: #101117;")
+    button_random.clicked.connect(button_random.click)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Window()
-    window.show()
-    sys.exit(app.exec_())
+    button_backward = QPushButton('<-') 
+    button_backward.setStyleSheet("color: white;")
+    button_backward.setStyleSheet("background-color: grey;")
+
+    # QShortcut(QKeySequence('Left'), window).activated.connect(button_backward_clicked(epub_layout))
+    button_backward.clicked.connect(button_backward_clicked(epub_layout))
+
+    button_layout.addWidget(button_backward)
+    button_layout.addWidget(button_random)
+    button_layout.addWidget(button_forward)
+
+    epub_layout.addLayout(content_layout)
+    epub_layout.addLayout(button_layout)
+
+    return epub_layout
+
+def button_forward_clicked(epub_layout):
+    global current_index
+    global all_list
+    print("Button Forward Clicked")
+    counter(epub_layout,2)
+    timer = QTimer()
+    timer.setSingleShot(True)
+    timer.timeout.connect(stop_functions)
+    timer.start(5000)
+
+def button_backward_clicked(epub_layout):
+    global current_index
+    global all_list
+    print("Button Backwards Clicked")
+    counter(epub_layout,1)
+    timer = QTimer()
+    timer.setSingleShot(True)
+    timer.timeout.connect(stop_functions)
+    timer.start(5000)
+
+def stop_functions():
+    global current_index
+    global all_list
+    print ("function done")
+
+def clearMainLayout(epub_layout):
+    global current_index
+    global all_list
+    while epub_layout.count():
+        item = epub_layout.takeAt(0)
+        if item.layout():
+            while item.layout().count():
+                sub_item = item.layout().takeAt(0)
+                if sub_item.widget():
+                    sub_item.widget().deleteLater()
+

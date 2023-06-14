@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QWidget, QShortcut
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QScrollArea, QWidget, QShortcut, QSpacerItem, QSizePolicy
+
 from PyQt5.QtGui import QPixmap, QFont, QKeySequence
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTimer, QEvent, pyqtSignal
+from PyQt5.QtCore import QTimer, QEvent, pyqtSignal, QMutexLocker
 
 import ebooklib
 from ebooklib import epub
@@ -11,15 +12,16 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Noveled")
-        # self.setGeometry(0, 0, 1920, 1080)
-        self.setGeometry(100, 100, 800, 600)
+        # self.showFullScreen() 
+        self.setGeometry(0, 0, 1920, 1080)
+        # self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #101117;")
+
+        self.main_layout = QVBoxLayout()
 
         self.font = QFont()
         self.font.setFamily("Arial")
         self.font.setPointSize(12)
-
-        self.layout = QVBoxLayout()
 
         book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
         self.all_list = []
@@ -37,15 +39,17 @@ class Window(QMainWindow):
         self.current_index = 0
         self.counter(0)
 
+
     def counter(self,value):
+        self.clearMainLayout()
         if value == 0 :
-            self.create_wid(self.all_list[self.current_index])
+            self.create_main(self.all_list[self.current_index])
         elif value==1 and self.current_index!=0:
             self.current_index = self.current_index - 1
-            self.create_wid(self.all_list[self.current_index])
+            self.create_main(self.all_list[self.current_index])
         elif value==2 and self.current_index!=(len(self.all_list)-1):
             self.current_index = self.current_index + 1
-            self.create_wid(self.all_list[self.current_index])
+            self.create_main(self.all_list[self.current_index])
 
     def scroller(self, to_print):
         self.epub_page = QWidget()
@@ -55,22 +59,22 @@ class Window(QMainWindow):
         scroll_area.setWidget(self.epub_page)
         self.setCentralWidget(scroll_area)
 
-    def create_wid(self, item):
-        self.wid_layout = QVBoxLayout()
+    def create_main(self, item):
+        self.content_layout = QHBoxLayout()
 
         if isinstance(item, QPixmap):
             label = QLabel(self)
             label.setPixmap(item)
-            self.wid_layout.addWidget(label)
+            self.content_layout.addWidget(label)
         elif isinstance(item, str):
             text_layout = QLabel(self)
             text_layout.setWordWrap(True)
             text_layout.setText(item)
             text_layout.setFont(self.font)
             text_layout.setStyleSheet("color: white;")
-            self.wid_layout.addWidget(text_layout)
-        
-        button_layout = QHBoxLayout()
+            self.content_layout.addWidget(text_layout)
+
+        self.button_layout = QHBoxLayout()
 
         button_forward = QPushButton('->', self)
         button_forward.setStyleSheet("color: white;")
@@ -93,21 +97,42 @@ class Window(QMainWindow):
         QShortcut(QKeySequence('Left'), self).activated.connect(self.button_backward_clicked)
         button_backward.clicked.connect(self.button_backward_clicked)
 
-        button_layout.addWidget(button_backward)
-        button_layout.addWidget(button_random)
-        button_layout.addWidget(button_forward)
+        self.button_layout.addWidget(button_backward)
+        self.button_layout.addWidget(button_random)
+        self.button_layout.addWidget(button_forward)
 
-        self.wid_layout.addLayout(button_layout)
+        self.main_layout.addLayout(self.content_layout)
+        self.main_layout.addLayout(self.button_layout)
 
-        self.scroller(self.wid_layout)
+        self.scroller(self.main_layout)
 
     def button_forward_clicked(self):
         print("Button Forward Clicked")
         self.counter(2)
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.stop_functions)
+        self.timer.start(5000)
 
     def button_backward_clicked(self):
         print("Button Backwards Clicked")
         self.counter(1)
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.stop_functions)
+        self.timer.start(5000)
+
+    def stop_functions(self):
+        print ("function done")
+    
+    def clearMainLayout(self):
+        while self.main_layout.count():
+            item = self.main_layout.takeAt(0)
+            if item.layout():
+                while item.layout().count():
+                    sub_item = item.layout().takeAt(0)
+                    if sub_item.widget():
+                        sub_item.widget().deleteLater()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
