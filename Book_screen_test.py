@@ -11,10 +11,13 @@ import sys
 current_index = 0
 all_list = []
 value = 0
-
+counters = []
 window = QMainWindow()
 
 def fonter():
+    global counters
+    counters.append("fonter")    
+    counters.append(current_index)
     font = QFont()
     font.setFamily("Arial")
     font.setPointSize(12)
@@ -23,6 +26,10 @@ def fonter():
 def epub_reader(epub_layout):
     global current_index
     global all_list
+    global counters
+    counters.append("epub_reader")
+    counters.append(current_index)
+
     global value
     book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
     for item in book.get_items():
@@ -39,6 +46,10 @@ def epub_reader(epub_layout):
 def counter(epub_layout):
     global current_index
     global all_list
+    global counters
+    counters.append("counter")
+    counters.append(current_index)
+
     global value
     clearMainLayout(epub_layout)
     if value == 0 :
@@ -53,6 +64,10 @@ def counter(epub_layout):
 def create_main(epub_layout,item):
     global current_index
     global all_list
+    global counters
+    counters.append("create_main")
+    counters.append(current_index)
+
     content_layout = QHBoxLayout()
 
     if isinstance(item, QPixmap):
@@ -74,7 +89,7 @@ def create_main(epub_layout,item):
     button_forward.setStyleSheet("background-color: grey;")
 
     # QShortcut(QKeySequence('Right'), window).activated.connect(button_forward_clicked)
-    button_forward.clicked.connect(button_forward_clicked)
+    button_forward.clicked.connect(lambda: button_forward_clicked(epub_layout))
 
     
     button_random = QPushButton('  ')
@@ -88,7 +103,7 @@ def create_main(epub_layout,item):
     button_backward.setStyleSheet("background-color: grey;")
 
     # QShortcut(QKeySequence('Left'), window).activated.connect(button_backward_clicked)
-    button_backward.clicked.connect(button_backward_clicked)
+    button_backward.clicked.connect(lambda: button_backward_clicked(epub_layout))
 
     button_layout.addWidget(button_backward)
     button_layout.addWidget(button_random)
@@ -97,36 +112,53 @@ def create_main(epub_layout,item):
     epub_layout.addLayout(content_layout)
     epub_layout.addLayout(button_layout)
 
-    return epub_layout
+    return (epub_layout, counters)
 
-def button_forward_clicked():
-    from main_test import home
-    my_instance = home()
-    global value
+def button_forward_clicked(main_layout):
+    global counters
     global current_index
+    counters.append("button_forward_clicked")
+    counters.append(current_index)
     global all_list
-    print("Button Forward Clicked")
+    # from main_test import home
+    # my_instance = home()
+    global value
     value = 2
-    my_instance.button_activate()
+    # my_instance.button_activate()
+    button_activate(main_layout)
+    print("Button Forward Clicked")
 
-def button_backward_clicked():
-    from main_test import home
-    my_instance = home()
-    global value
+
+def button_backward_clicked(main_layout):
     global current_index
+    global counters
+    counters.append("button_backward_clicked")
+    counters.append(current_index)
     global all_list
+    # from main_test import home
+    # my_instance = home()
+    global value
+
     print("Button Backwards Clicked")
     value = 1
-    my_instance.button_activate()
+    # my_instance.button_activate()
+    button_activate(main_layout)
 
 def stop_functions():
     global current_index
     global all_list
+    global counters
+    counters.append("stop_functions")
+    counters.append(current_index)
+
     print ("function done")
 
 def clearMainLayout(epub_layout):
     global current_index
     global all_list
+    global counters
+    counters.append("clearMainLayout")
+    counters.append(current_index)
     while epub_layout.count():
         item = epub_layout.takeAt(0)
         if item.layout():
@@ -135,3 +167,30 @@ def clearMainLayout(epub_layout):
                 if sub_item.widget():
                     sub_item.widget().deleteLater()
 
+def button_activate(main_layout):
+    hi, yo = epub_reader(main_layout)
+    my_instance = myclass()
+    my_instance.scroller_e(hi, yo)
+
+
+
+class myclass(QMainWindow):
+    
+    def scroller_e(self,to_print, value):
+        if to_print:
+            print(value)
+            main_widget = QWidget()
+            main_widget.setLayout(to_print)
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setWidget(main_widget)
+            self.setCentralWidget(scroll_area)
+        else:
+            print(value)
+            print("Invalid layout passed to scroller method.")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = myclass()
+    win.showMaximized()
+    sys.exit(app.exec_())
