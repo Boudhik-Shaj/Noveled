@@ -32,16 +32,20 @@ class home(QMainWindow):
         self.timer.start(3000)
 
     def closeLoadingScreen(self):
-        from Book_screen_test import epub_reader  # Import inside the method
+        from Book_screen_test import epub_reader 
         self.scroller(epub_reader(self.main_layout))
 
     def scroller(self, to_print):
-        self.main_widget = QWidget()
-        self.main_widget.setLayout(to_print)
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(self.main_widget)
-        self.setCentralWidget(scroll_area)
+        if to_print:
+            self.main_widget = QWidget()
+            self.main_widget.setLayout(to_print)
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setWidget(self.main_widget)
+            self.setCentralWidget(scroll_area)
+        else:
+            print("Invalid layout passed to scroller method.")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

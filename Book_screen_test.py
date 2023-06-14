@@ -10,6 +10,7 @@ import sys
 
 current_index = 0
 all_list = []
+value = 0
 
 window = QMainWindow()
 
@@ -22,6 +23,7 @@ def fonter():
 def epub_reader(epub_layout):
     global current_index
     global all_list
+    global value
     book = epub.read_epub('Spellslinger_-_Sebastien_de_Castell.epub')
     for item in book.get_items():
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
@@ -31,12 +33,13 @@ def epub_reader(epub_layout):
             pixmap = QPixmap()
             pixmap.loadFromData(item.get_content())
             all_list.append(pixmap)
-        return counter(epub_layout,current_index)
+        return counter(epub_layout)
 
 
-def counter(epub_layout,value):
+def counter(epub_layout):
     global current_index
     global all_list
+    global value
     clearMainLayout(epub_layout)
     if value == 0 :
         return create_main(epub_layout,all_list[current_index])
@@ -70,8 +73,8 @@ def create_main(epub_layout,item):
     button_forward.setStyleSheet("color: white;")
     button_forward.setStyleSheet("background-color: grey;")
 
-    # QShortcut(QKeySequence('Right'), window).activated.connect(button_forward_clicked(epub_layout))
-    button_forward.clicked.connect(button_forward_clicked(epub_layout))
+    # QShortcut(QKeySequence('Right'), window).activated.connect(button_forward_clicked)
+    button_forward.clicked.connect(button_forward_clicked)
 
     
     button_random = QPushButton('  ')
@@ -84,8 +87,8 @@ def create_main(epub_layout,item):
     button_backward.setStyleSheet("color: white;")
     button_backward.setStyleSheet("background-color: grey;")
 
-    # QShortcut(QKeySequence('Left'), window).activated.connect(button_backward_clicked(epub_layout))
-    button_backward.clicked.connect(button_backward_clicked(epub_layout))
+    # QShortcut(QKeySequence('Left'), window).activated.connect(button_backward_clicked)
+    button_backward.clicked.connect(button_backward_clicked)
 
     button_layout.addWidget(button_backward)
     button_layout.addWidget(button_random)
@@ -96,25 +99,26 @@ def create_main(epub_layout,item):
 
     return epub_layout
 
-def button_forward_clicked(epub_layout):
+def button_forward_clicked():
+    global value
     global current_index
     global all_list
     print("Button Forward Clicked")
-    counter(epub_layout,2)
-    timer = QTimer()
-    timer.setSingleShot(True)
-    timer.timeout.connect(stop_functions)
-    timer.start(5000)
+    value = 2
+    button_activate()
 
-def button_backward_clicked(epub_layout):
+def button_backward_clicked():
+    global value
     global current_index
     global all_list
     print("Button Backwards Clicked")
-    counter(epub_layout,1)
-    timer = QTimer()
-    timer.setSingleShot(True)
-    timer.timeout.connect(stop_functions)
-    timer.start(5000)
+    value = 1
+    button_activate()
+
+def button_activate():
+    from main_test import home
+    my_instance = home()
+    my_instance.scroller(epub_reader(my_instance.main_layout))
 
 def stop_functions():
     global current_index
