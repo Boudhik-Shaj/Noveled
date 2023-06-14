@@ -34,6 +34,10 @@ class home(QMainWindow):
     def closeLoadingScreen(self):
         from Book_screen_test import epub_reader 
         self.scroller(epub_reader(self.main_layout))
+    
+    def button_activate(self):
+        from Book_screen_test import epub_reader 
+        self.scroller(epub_reader(self.main_layout))
 
     def scroller(self, to_print):
         if to_print:
