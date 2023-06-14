@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QHBoxLayout, QVBo
 
 from PyQt5.QtGui import QPixmap, QFont, QKeySequence
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTimer, QEvent, pyqtSignal
+from PyQt5.QtCore import QTimer, QEvent, pyqtSignal, QMutexLocker
 
 import ebooklib
 from ebooklib import epub
@@ -39,6 +39,7 @@ class Window(QMainWindow):
         self.current_index = 0
         self.counter(0)
 
+
     def counter(self,value):
         self.clearMainLayout()
         if value == 0 :
@@ -73,7 +74,7 @@ class Window(QMainWindow):
             text_layout.setStyleSheet("color: white;")
             self.main_layout.addWidget(text_layout)
 
-        button_layout = QHBoxLayout()
+        self.button_layout = QHBoxLayout()
 
         button_forward = QPushButton('->', self)
         button_forward.setStyleSheet("color: white;")
@@ -96,22 +97,33 @@ class Window(QMainWindow):
         QShortcut(QKeySequence('Left'), self).activated.connect(self.button_backward_clicked)
         button_backward.clicked.connect(self.button_backward_clicked)
 
-        button_layout.addWidget(button_backward)
-        button_layout.addWidget(button_random)
-        button_layout.addWidget(button_forward)
+        self.button_layout.addWidget(button_backward)
+        self.button_layout.addWidget(button_random)
+        self.button_layout.addWidget(button_forward)
 
         self.layout.addLayout(self.main_layout)
-        self.layout.addLayout(button_layout)
+        self.layout.addLayout(self.button_layout)
 
         self.scroller(self.layout)
 
     def button_forward_clicked(self):
         print("Button Forward Clicked")
         self.counter(2)
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.stop_functions)
+        self.timer.start(5000)
 
     def button_backward_clicked(self):
         print("Button Backwards Clicked")
         self.counter(1)
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.stop_functions)
+        self.timer.start(5000)
+
+    def stop_functions(self):
+        print ("function done")
     
     def clearMainLayout(self):
         while self.layout.count():
