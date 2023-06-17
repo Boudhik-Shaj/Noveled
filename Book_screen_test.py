@@ -51,7 +51,7 @@ def counter(epub_layout):
     counters.append(current_index)
 
     global value
-    clearMainLayout(epub_layout)
+    # clearMainLayout(epub_layout)
     if value == 0 :
         return create_main(epub_layout,all_list[current_index])
     elif value==1 and current_index!=0:
@@ -120,12 +120,12 @@ def button_forward_clicked(main_layout):
     counters.append("button_forward_clicked")
     counters.append(current_index)
     global all_list
-    # from main_test import home
-    # my_instance = home()
+    from main_test import home
+    my_instance = home()
     global value
     value = 2
-    # my_instance.button_activate()
-    button_activate(main_layout)
+    my_instance.button_activate()
+    # button_activate(main_layout)
     print("Button Forward Clicked")
 
 
@@ -135,14 +135,14 @@ def button_backward_clicked(main_layout):
     counters.append("button_backward_clicked")
     counters.append(current_index)
     global all_list
-    # from main_test import home
-    # my_instance = home()
+    from main_test import home
+    my_instance = home()
     global value
 
-    print("Button Backwards Clicked")
     value = 1
-    # my_instance.button_activate()
-    button_activate(main_layout)
+    my_instance.button_activate()
+    print("Button Backwards Clicked")
+    # button_activate(main_layout)
 
 def stop_functions():
     global current_index
@@ -150,7 +150,6 @@ def stop_functions():
     global counters
     counters.append("stop_functions")
     counters.append(current_index)
-
     print ("function done")
 
 def clearMainLayout(epub_layout):
@@ -167,30 +166,23 @@ def clearMainLayout(epub_layout):
                 if sub_item.widget():
                     sub_item.widget().deleteLater()
 
-def button_activate(main_layout):
-    hi, yo = epub_reader(main_layout)
-    my_instance = myclass()
-    my_instance.scroller_e(hi, yo)
-
-
-
-class myclass(QMainWindow):
-    
-    def scroller_e(self,to_print, value):
-        if to_print:
-            print(value)
-            main_widget = QWidget()
-            main_widget.setLayout(to_print)
-            scroll_area = QScrollArea()
-            scroll_area.setWidgetResizable(True)
-            scroll_area.setWidget(main_widget)
-            self.setCentralWidget(scroll_area)
-        else:
-            print(value)
-            print("Invalid layout passed to scroller method.")
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    win = myclass()
-    win.showMaximized()
-    sys.exit(app.exec_())
+# class myclass(QMainWindow):
+#   
+#     def scroller_e(self,to_print, value):
+#         if to_print:
+#             print(value)
+#             main_widget = QWidget()
+#             main_widget.setLayout(to_print)
+#             scroll_area = QScrollArea()
+#             scroll_area.setWidgetResizable(True)
+#             scroll_area.setWidget(main_widget)
+#             self.setCentralWidget(scroll_area)
+#         else:
+#             print(value)
+#             print("Invalid layout passed to scroller method.")
+#
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     win = myclass()
+#     win.showMaximized()
+#     sys.exit(app.exec_())
