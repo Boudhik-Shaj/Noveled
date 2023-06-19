@@ -44,6 +44,8 @@ class Window(QMainWindow):
         self.clearMainLayout()
         if value == 0 :
             self.create_main(self.all_list[self.current_index])
+        elif (self.current_index == 0 and value==1) or (self.current_index == (len(self.all_list)-1) and value==2):
+            self.create_main(self.all_list[self.current_index]) 
         elif value==1 and self.current_index!=0:
             self.current_index = self.current_index - 1
             self.create_main(self.all_list[self.current_index])
@@ -109,18 +111,10 @@ class Window(QMainWindow):
     def button_forward_clicked(self):
         print("Button Forward Clicked")
         self.counter(2)
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.stop_functions)
-        self.timer.start(5000)
 
     def button_backward_clicked(self):
         print("Button Backwards Clicked")
         self.counter(1)
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.stop_functions)
-        self.timer.start(5000)
 
     def stop_functions(self):
         print ("function done")
