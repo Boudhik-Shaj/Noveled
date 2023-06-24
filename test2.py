@@ -1,20 +1,35 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
-from test import create_layout
+from bs4 import BeautifulSoup
+import textwrap
 
-class Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Main Window")
-        self.setGeometry(100, 100, 400, 300)
+def pager(note, max_width):
+    # Parse the HTML string using BeautifulSoup
+    soup = BeautifulSoup(note, 'html.parser')
 
-        # Set the layout from layout_file.py
-        layout_object = create_layout()
-        widget = QWidget()
-        widget.setLayout(layout_object)
-        self.setCentralWidget(widget)
+    # Find all the HTML tags in the parsed soup
+    tags = soup.find_all()
 
-if __name__ == "__main__":
-    app = QApplication([])
-    window = Window()
-    window.show()
-    app.exec_()
+    # Initialize an empty list to store the chunks
+    chunks = []
+
+    for tag in tags:
+        # Convert the tag back to a string representation
+        tag_string = str(tag)
+
+        # Split the tag string into smaller chunks based on the max width
+        tag_chunks = textwrap.wrap(tag_string, width=max_width)
+
+        # Append the tag chunks to the list of chunks
+        chunks.extend(tag_chunks)
+
+    return chunks
+
+# Example usage
+html_string = "<p>Lorem ipsum <strong>dolor sit amet</strong>, consectetur adipiscing elit.</p>"
+max_width = 20
+
+# Split the HTML string into smaller chunks
+chunks = pager(html_string, max_width)
+
+# Print each chunk separately
+for chunk in chunks:
+    print(chunk)
